@@ -26,17 +26,19 @@ export default function Dashboard() {
   const [mood, setMood] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:5000/analytics")
+    fetch("https://mental-backend-heru.onrender.com/api/analytics")
       .then(res => res.json())
       .then(data => {
         setTrend(data.sentimentTrend || []);
         setMood(data.moodCount || {});
-      });
+      })
+      .catch(err => console.error("Fetch error:", err));
   }, []);
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
 
+      {/* 📈 Line Chart */}
       <div className="bg-white dark:bg-card p-6 rounded-2xl shadow">
         <h2 className="text-xl font-semibold">
           Sentiment Trend
@@ -87,7 +89,7 @@ export default function Dashboard() {
         />
       </div>
 
-      
+      {/* 🥧 Pie Chart */}
       <div className="bg-white dark:bg-card p-6 rounded-2xl shadow">
         <h2 className="text-xl font-semibold">
           Mood Distribution
@@ -108,7 +110,7 @@ export default function Dashboard() {
                       "#22c55e", // Happy
                       "#6366f1", // Neutral
                       "#ef4444", // Sad
-                      "#f59e0b"  // Anxious / Stressed
+                      "#f59e0b"  // Stress/Anxious
                     ],
                     borderWidth: 1
                   }
