@@ -18,13 +18,16 @@ export default function Journal() {
     setResult(null);
 
     try {
-      const res = await fetch("http://localhost:5000/entry", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text, mood })
-      });
+      const res = await fetch(
+        "https://mental-backend-heru.onrender.com/api/entry",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text, mood })
+        }
+      );
 
       const data = await res.json();
 
@@ -37,7 +40,7 @@ export default function Journal() {
       setMood("");
 
     } catch (err) {
-      setError(err.message);
+      setError("Failed to connect to server");
     } finally {
       setLoading(false);
     }
@@ -65,12 +68,11 @@ export default function Journal() {
           onChange={e => setMood(e.target.value)}
         >
           <option value="">Select your mood</option>
-          <option value="Happy"> Happy</option>
-          <option value="Neutral"> Neutral</option>
-          <option value="Sad"> Sad</option>
-          <option value="Anxious"> Anxious</option>
-          <option value="Stressed"> Stressed</option>
-          <option value="hello">hello</option>
+          <option value="Happy">Happy</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Sad">Sad</option>
+          <option value="Anxious">Anxious</option>
+          <option value="Stressed">Stressed</option>
         </select>
 
         <button
@@ -82,7 +84,7 @@ export default function Journal() {
         </button>
 
         {error && (
-          <p className="text-danger text-sm text-center">
+          <p className="text-red-500 text-sm text-center">
             {error}
           </p>
         )}
@@ -97,14 +99,14 @@ export default function Journal() {
           <div className="flex flex-col gap-2">
             <p>
               <span className="font-medium">Mismatch:</span>{" "}
-              <span className={result.mismatch ? "text-danger" : "text-secondary"}>
+              <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
                 {result.mismatch ? "Yes" : "No"}
               </span>
             </p>
 
             <p>
               <span className="font-medium">Perception Type:</span>{" "}
-              <span className="text-primary">
+              <span className="text-blue-500">
                 {result.perceptionType}
               </span>
             </p>
@@ -112,7 +114,7 @@ export default function Journal() {
 
           <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             This analysis reflects language patterns and self-reported mood,
-            not a medical or psychological diagnosis.
+            not a medical diagnosis.
           </p>
         </div>
       )}
