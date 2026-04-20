@@ -35,12 +35,13 @@ export default function Journal() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      setResult(data);
+      setResult(data.data); // ✅ FIX HERE
+
       setText("");
       setMood("");
 
     } catch (err) {
-      setError("Failed to connect to server");
+      setError("Server is waking up... please try again in a few seconds.");
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export default function Journal() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:opacity-90 transition"
+          className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:opacity-90 transition"
         >
           {loading ? "Analyzing..." : "Save Entry"}
         </button>
@@ -96,7 +97,8 @@ export default function Journal() {
             Analysis Result
           </h2>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
+
             <p>
               <span className="font-medium">Mismatch:</span>{" "}
               <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
@@ -110,6 +112,20 @@ export default function Journal() {
                 {result.perceptionType}
               </span>
             </p>
+
+            {/* 🔥 BONUS INSIGHT MESSAGE */}
+            {result.perceptionType === "Masking Stress" && (
+              <p className="text-yellow-600">
+                ⚠ You might be hiding stress behind positive emotions.
+              </p>
+            )}
+
+            {result.perceptionType === "Resilience" && (
+              <p className="text-green-600">
+                💪 You are showing emotional resilience.
+              </p>
+            )}
+
           </div>
 
           <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
