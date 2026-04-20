@@ -30,34 +30,52 @@ export default function Dashboard() {
     total: 0,
     types: 0
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("https://mental-backend-heru.onrender.com/api/analytics")
       .then(res => res.json())
       .then(data => {
         const t = data.sentimentTrend || [];
-        const m = data.moodCount || {};
+        const rawMood = data.moodCount || {};
+
+        // ✅ FIX 1: Normalize mood (remove duplicates)
+        const normalizedMood = {};
+        Object.entries(rawMood).forEach(([key, value]) => {
+          const cleanKey = key.toLowerCase();
+          normalizedMood[cleanKey] =
+            (normalizedMood[cleanKey] || 0) + value;
+        });
 
         setTrend(t);
-        setMood(m);
+        setMood(normalizedMood);
 
-        // 🔥 Calculate stats
+        // ✅ FIX 2: Calculate stats safely
         const avg =
           t.reduce((sum, i) => sum + i.score, 0) / (t.length || 1);
 
         const dominant =
-          Object.keys(m).reduce((a, b) =>
-            m[a] > m[b] ? a : b
-          , "");
+          Object.keys(normalizedMood).length > 0
+            ? Object.keys(normalizedMood).reduce((a, b) =>
+                normalizedMood[a] > normalizedMood[b] ? a : b
+              )
+            : "None";
 
         setStats({
           avg: avg.toFixed(2),
-          dominant,
+          dominant: capitalize(dominant),
           total: t.length,
-          types: Object.keys(m).length
+          types: Object.keys(normalizedMood).length
         });
-      });
+
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return <div className="text-center mt-10">⏳ Loading...</div>;
+  }
 
   return (
     <div className="p-6 space-y-8">
@@ -92,7 +110,12 @@ export default function Dashboard() {
 
           <Line
             data={{
-              labels: trend.map(t => t.date),
+              labels: trend.map(t =>
+                new Date(t.date).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short"
+                })
+              ),
               datasets: [
                 {
                   label: "Sentiment",
@@ -105,6 +128,10 @@ export default function Dashboard() {
               ]
             }}
             options={{
+              responsive: true,
+              plugins: {
+                legend: { position: "bottom" }
+              },
               scales: {
                 y: { min: -1, max: 1 }
               }
@@ -121,18 +148,24 @@ export default function Dashboard() {
 
           <Doughnut
             data={{
-              labels: Object.keys(mood),
+              labels: Object.keys(mood).map(capitalize),
               datasets: [
                 {
                   data: Object.values(mood),
                   backgroundColor: [
-                    "#22c55e",
-                    "#6366f1",
-                    "#ef4444",
-                    "#f59e0b"
+                    "#22c55e", // happy
+                    "#6366f1", // neutral
+                    "#ef4444", // sad
+                    "#f59e0b", // anxious
+                    "#a855f7"  // stressed
                   ]
                 }
               ]
+            }}
+            options={{
+              plugins: {
+                legend: { position: "bottom" }
+              }
             }}
           />
         </div>
@@ -146,9 +179,14 @@ export default function Dashboard() {
 /* 🔥 CARD COMPONENT */
 function Card({ title, value }) {
   return (
-    <div className="bg-white p-5 rounded-2xl shadow text-center">
+    <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
       <p className="text-sm text-gray-500">{title}</p>
       <h2 className="text-2xl font-bold mt-2">{value}</h2>
     </div>
   );
+}
+
+/* 🔥 HELPER */
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
