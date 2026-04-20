@@ -1,5 +1,5 @@
 export async function submitEntry(data) {
-  await fetch("http://localhost:5000/entry", {
+  await fetch("https://mental-backend-heru.onrender.com/api/entry", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
