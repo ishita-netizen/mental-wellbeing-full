@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Journal from "./pages/Journal";
 import Dashboard from "./pages/Dashboard";
+import History from "./pages/History"; // ✅ ADD THIS
 
 function App() {
   const [page, setPage] = useState("journal");
@@ -16,10 +17,24 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background text-gray-900 dark:text-gray-100">
+
+      {/* 🔝 NAVBAR */}
       <nav className="flex justify-between items-center px-6 py-4 bg-white dark:bg-card shadow">
-        <div className="flex gap-4 font-semibold">
-          <button onClick={() => setPage("journal")}>Journal</button>
-          <button onClick={() => setPage("dashboard")}>Dashboard</button>
+        
+        <div className="flex gap-6 font-semibold">
+
+          <button onClick={() => setPage("journal")}>
+            Journal
+          </button>
+
+          <button onClick={() => setPage("dashboard")}>
+            Dashboard
+          </button>
+
+          <button onClick={() => setPage("history")}>
+            History
+          </button>
+
         </div>
 
         <button
@@ -30,7 +45,11 @@ function App() {
         </button>
       </nav>
 
-      {page === "journal" ? <Journal /> : <Dashboard />}
+      {/* 🔄 PAGE SWITCHING */}
+      {page === "journal" && <Journal />}
+      {page === "dashboard" && <Dashboard />}
+      {page === "history" && <History />}
+
     </div>
   );
 }
