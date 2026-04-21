@@ -62,24 +62,24 @@ export default function History() {
                 {e.text}
               </p>
 
-              {/* TAGS */}
+              {/* DETAILS */}
               <div className="mt-4 flex flex-wrap gap-2 text-sm">
 
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  😊 {e.mood}
+                  🧾 Entered Mood: {e.mood}
                 </span>
 
                 <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
-                  📊 {e.sentimentScore?.toFixed(2)}
+                  📊 Sentiment Score: {e.sentimentScore?.toFixed(2)}
                 </span>
 
                 <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full">
-                  🧠 {e.perceptionType}
+                  🧠 Perception Type: {e.perceptionType}
                 </span>
 
                 {e.mismatch && (
                   <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full">
-                    ⚠ Mismatch
+                    ⚠ Mismatch Detected
                   </span>
                 )}
 
