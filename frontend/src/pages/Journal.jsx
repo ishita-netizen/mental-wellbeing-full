@@ -7,9 +7,8 @@ export default function Journal() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
-  // store last submitted data
-  const [lastText, setLastText] = useState("");
-  const [lastMood, setLastMood] = useState("");
+  const [lastText, setLastText] = useState(""); // added
+  const [lastMood, setLastMood] = useState(""); // added
 
   const handleSubmit = async () => {
     if (!text || !mood) {
@@ -39,17 +38,17 @@ export default function Journal() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      // store everything
       setResult(data.data);
+
+      // store last values
       setLastText(text);
       setLastMood(mood);
 
-      // clear input
       setText("");
       setMood("");
 
     } catch (err) {
-      setError("Server is waking up... try again.");
+      setError("Server is waking up... please try again in a few seconds.");
     } finally {
       setLoading(false);
     }
@@ -58,118 +57,93 @@ export default function Journal() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
 
-      {/* HEADER */}
       <h1 className="text-3xl font-bold mb-8 text-center">
-        🧠 AI Journal
+        Daily Journal
       </h1>
 
-      {/* INPUT CARD */}
-      <div className="bg-white shadow-lg rounded-xl p-6 space-y-5">
-
+      <div className="bg-white dark:bg-card shadow-lg rounded-xl p-6 space-y-5">
         <textarea
-          className="w-full p-4 rounded-lg border"
-          rows="5"
-          placeholder="Write your thoughts..."
+          className="w-full p-4 rounded-lg bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+          rows="6"
+          placeholder="Write about your day, thoughts, or feelings..."
           value={text}
           onChange={e => setText(e.target.value)}
         />
 
         <select
-          className="w-full p-3 rounded-lg border"
+          className="w-full p-3 rounded-lg bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
           value={mood}
           onChange={e => setMood(e.target.value)}
         >
           <option value="">Select your mood</option>
-          <option>Happy</option>
-          <option>Neutral</option>
-          <option>Sad</option>
-          <option>Anxious</option>
-          <option>Stressed</option>
+          <option value="Happy">Happy</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Sad">Sad</option>
+          <option value="Anxious">Anxious</option>
+          <option value="Stressed">Stressed</option>
         </select>
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full py-3 bg-blue-600 text-white rounded-lg"
+          className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:opacity-90 transition"
         >
           {loading ? "Analyzing..." : "Save Entry"}
         </button>
 
         {error && (
-          <p className="text-red-500 text-center">{error}</p>
+          <p className="text-red-500 text-sm text-center">
+            {error}
+          </p>
         )}
       </div>
 
-      {/* RESULT */}
       {result && (
-        <div className="mt-8 bg-white shadow rounded-xl p-6 space-y-4">
-
-          <h2 className="text-xl font-semibold">
-            🔍 Analysis Result
+        <div className="mt-8 bg-white dark:bg-card shadow rounded-xl p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Analysis Result
           </h2>
 
-          {/* USER ENTRY */}
-          <div className="p-3 bg-gray-100 rounded">
-            <p className="text-sm text-gray-500">Your Entry:</p>
-            <p>{lastText}</p>
-          </div>
+          <div className="flex flex-col gap-2">
 
-          {/* USER MOOD */}
-          <div className="p-3 bg-blue-100 rounded">
-            <p className="text-sm text-gray-500">Your Mood:</p>
-            <p className="font-semibold">{lastMood}</p>
-          </div>
-
-          {/* NLP PREDICTED MOOD */}
-          <div className="p-3 bg-green-100 rounded">
-            <p className="text-sm text-gray-500">Predicted Mood (AI):</p>
-            <p className="font-semibold">
-              {result.predictedMood || "Not available"}
+            {/* ADDED: show entry */}
+            <p>
+              <span className="font-medium">Your Entry:</span>{" "}
+              {lastText}
             </p>
+
+            {/* ADDED: show mood */}
+            <p>
+              <span className="font-medium">Your Mood:</span>{" "}
+              {lastMood}
+            </p>
+
+            {/* ADDED: show predicted mood */}
+            <p>
+              <span className="font-medium">Predicted Mood:</span>{" "}
+              {result.predictedMood}
+            </p>
+
+            <p>
+              <span className="font-medium">Mismatch:</span>{" "}
+              <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
+                {result.mismatch ? "Yes" : "No"}
+              </span>
+            </p>
+
+            <p>
+              <span className="font-medium">Perception Type:</span>{" "}
+              <span className="text-blue-500">
+                {result.perceptionType}
+              </span>
+            </p>
+
           </div>
 
-          {/* MATCH / MISMATCH */}
-          <div>
-            {lastMood === result.predictedMood ? (
-              <p className="text-green-600">
-                ✅ Your mood matches your expression
-              </p>
-            ) : (
-              <p className="text-red-600">
-                ⚠ Your mood and expression differ
-              </p>
-            )}
-          </div>
-
-          {/* ANALYSIS */}
-          <p>
-            <b>Mismatch:</b>{" "}
-            {result.mismatch ? "Yes" : "No"}
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            This analysis reflects language patterns and self-reported mood,
+            not a medical diagnosis.
           </p>
-
-          <p>
-            <b>Perception:</b> {result.perceptionType}
-          </p>
-
-          {/* INSIGHTS */}
-          {result.perceptionType === "Masking Stress" && (
-            <p className="text-yellow-600">
-              ⚠ You might be hiding stress behind positive emotions.
-            </p>
-          )}
-
-          {result.perceptionType === "Resilience" && (
-            <p className="text-green-600">
-              💪 You are emotionally strong.
-            </p>
-          )}
-
-          {result.perceptionType === "Aligned" && (
-            <p className="text-blue-600">
-              👍 Your emotions are aligned.
-            </p>
-          )}
-
         </div>
       )}
     </div>
