@@ -55,12 +55,10 @@ export default function Journal() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
 
-      {/* 🔥 HEADER */}
       <h1 className="text-3xl font-bold mb-6 text-center">
         📝 Daily Journal
       </h1>
 
-      {/* 🔥 INPUT CARD */}
       <div className="bg-white dark:bg-card shadow-xl rounded-2xl p-6 space-y-5 border">
 
         <textarea
@@ -99,7 +97,6 @@ export default function Journal() {
         )}
       </div>
 
-      {/* 🔥 RESULT CARD */}
       {result && (
         <div className="mt-8 bg-white dark:bg-card shadow-xl rounded-2xl p-6 border">
 
@@ -110,26 +107,26 @@ export default function Journal() {
           <div className="space-y-3 text-sm">
 
             <div className="p-3 bg-gray-50 rounded-lg">
-              <span className="font-medium">Your Entry:</span>
+              <span className="font-medium">📝 Your Entry:</span>
               <p className="mt-1 text-gray-700">{lastText}</p>
             </div>
 
             <div className="flex gap-3 flex-wrap">
 
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                Mood: {lastMood}
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                😊 Entered Mood: {lastMood}
               </span>
 
-              <span className={`px-3 py-1 rounded-full text-sm ${
+              <span className={`px-3 py-1 rounded-full ${
                 result.mismatch
                   ? "bg-red-100 text-red-600"
                   : "bg-green-100 text-green-600"
               }`}>
-                {result.mismatch ? "Mismatch" : "Aligned"}
+                ⚖️ Alignment: {result.mismatch ? "Mismatch" : "Aligned"}
               </span>
 
-              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                {result.perceptionType}
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full">
+                🧠 Perception Type: {result.perceptionType}
               </span>
 
             </div>
