@@ -9,7 +9,7 @@ export default function History() {
     fetch("https://mental-backend-heru.onrender.com/api/entry")
       .then(res => res.json())
       .then(data => {
-        setEntries(data.data || []);
+        setEntries(data?.data || []); // ✅ safe access
         setLoading(false);
       })
       .catch(() => {
@@ -34,48 +34,54 @@ export default function History() {
         <p className="text-gray-500">No entries yet</p>
       ) : (
         <div className="space-y-4">
-          {entries.map((e) => (
-            <div
-              key={e._id}
-              className="p-4 rounded-xl shadow bg-white dark:bg-card"
-            >
-              {/* DATE */}
-              <p className="text-sm text-gray-400">
-                {new Date(e.createdAt).toLocaleString()}
-              </p>
+          {entries.map((e) => {
+            const predicted =
+              e.predictedMood || e.predicted_mood || "N/A"; // ✅ FIX
 
-              {/* TEXT */}
-              <p className="mt-2">{e.text}</p>
+            return (
+              <div
+                key={e._id}
+                className="p-4 rounded-xl shadow bg-white dark:bg-card"
+              >
+                {/* DATE */}
+                <p className="text-sm text-gray-400">
+                  {e.createdAt
+                    ? new Date(e.createdAt).toLocaleString()
+                    : "No date"}
+                </p>
 
-              {/* TAGS */}
-              <div className="mt-3 flex flex-wrap gap-2 text-sm">
+                {/* TEXT */}
+                <p className="mt-2">{e.text}</p>
 
-                <span className="px-2 py-1 bg-blue-100 rounded">
-                  Mood: {e.mood}
-                </span>
+                {/* TAGS */}
+                <div className="mt-3 flex flex-wrap gap-2 text-sm">
 
-                {/* ✅ NEW */}
-                <span className="px-2 py-1 bg-green-100 rounded">
-                  AI: {e.predictedMood || "N/A"}
-                </span>
-
-                <span className="px-2 py-1 bg-gray-100 rounded">
-                  Score: {e.sentimentScore}
-                </span>
-
-                <span className="px-2 py-1 bg-purple-100 rounded">
-                  {e.perceptionType}
-                </span>
-
-                {e.mismatch && (
-                  <span className="px-2 py-1 bg-red-100 rounded text-red-600">
-                    ⚠ Mismatch
+                  <span className="px-2 py-1 bg-blue-100 rounded">
+                    Mood: {e.mood}
                   </span>
-                )}
 
+                  <span className="px-2 py-1 bg-green-100 rounded">
+                    AI: {predicted}
+                  </span>
+
+                  <span className="px-2 py-1 bg-gray-100 rounded">
+                    Score: {e.sentimentScore ?? 0}
+                  </span>
+
+                  <span className="px-2 py-1 bg-purple-100 rounded">
+                    {e.perceptionType || "N/A"}
+                  </span>
+
+                  {e.mismatch && (
+                    <span className="px-2 py-1 bg-red-100 rounded text-red-600">
+                      ⚠ Mismatch
+                    </span>
+                  )}
+
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
