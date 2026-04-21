@@ -7,8 +7,8 @@ export default function Journal() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
-  const [lastText, setLastText] = useState(""); // added
-  const [lastMood, setLastMood] = useState(""); // added
+  const [lastText, setLastText] = useState("");
+  const [lastMood, setLastMood] = useState("");
 
   const handleSubmit = async () => {
     if (!text || !mood) {
@@ -106,24 +106,25 @@ export default function Journal() {
 
           <div className="flex flex-col gap-2">
 
-            {/* ADDED: show entry */}
+            {/* ENTRY */}
             <p>
               <span className="font-medium">Your Entry:</span>{" "}
               {lastText}
             </p>
 
-            {/* ADDED: show mood */}
+            {/* USER MOOD */}
             <p>
               <span className="font-medium">Your Mood:</span>{" "}
               {lastMood}
             </p>
 
-            {/* ADDED: show predicted mood */}
+            {/* PREDICTED MOOD */}
             <p>
               <span className="font-medium">Predicted Mood:</span>{" "}
-              {result.predictedMood}
+              {result.predictedMood || "Not available"}
             </p>
 
+            {/* MATCH / MISMATCH */}
             <p>
               <span className="font-medium">Mismatch:</span>{" "}
               <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
