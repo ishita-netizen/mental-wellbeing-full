@@ -39,8 +39,6 @@ export default function Journal() {
       }
 
       setResult(data.data);
-
-      // store last values
       setLastText(text);
       setLastMood(mood);
 
@@ -57,13 +55,16 @@ export default function Journal() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
 
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        Daily Journal
+      {/* 🔥 HEADER */}
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        📝 Daily Journal
       </h1>
 
-      <div className="bg-white dark:bg-card shadow-lg rounded-xl p-6 space-y-5">
+      {/* 🔥 INPUT CARD */}
+      <div className="bg-white dark:bg-card shadow-xl rounded-2xl p-6 space-y-5 border">
+
         <textarea
-          className="w-full p-4 rounded-lg bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full p-4 rounded-xl bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           rows="6"
           placeholder="Write about your day, thoughts, or feelings..."
           value={text}
@@ -71,22 +72,22 @@ export default function Journal() {
         />
 
         <select
-          className="w-full p-3 rounded-lg bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full p-3 rounded-xl bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           value={mood}
           onChange={e => setMood(e.target.value)}
         >
           <option value="">Select your mood</option>
-          <option value="Happy">Happy</option>
-          <option value="Neutral">Neutral</option>
-          <option value="Sad">Sad</option>
-          <option value="Anxious">Anxious</option>
-          <option value="Stressed">Stressed</option>
+          <option value="Happy">😊 Happy</option>
+          <option value="Neutral">😐 Neutral</option>
+          <option value="Sad">😢 Sad</option>
+          <option value="Anxious">😟 Anxious</option>
+          <option value="Stressed">😫 Stressed</option>
         </select>
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:opacity-90 transition"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold hover:opacity-90 transition shadow-md"
         >
           {loading ? "Analyzing..." : "Save Entry"}
         </button>
@@ -98,48 +99,47 @@ export default function Journal() {
         )}
       </div>
 
+      {/* 🔥 RESULT CARD */}
       {result && (
-        <div className="mt-8 bg-white dark:bg-card shadow rounded-xl p-6">
+        <div className="mt-8 bg-white dark:bg-card shadow-xl rounded-2xl p-6 border">
+
           <h2 className="text-xl font-semibold mb-4">
-            Analysis Result
+            📊 Analysis Result
           </h2>
 
-          <div className="flex flex-col gap-2">
+          <div className="space-y-3 text-sm">
 
-            {/* ENTRY */}
-            <p>
-              <span className="font-medium">Your Entry:</span>{" "}
-              {lastText}
-            </p>
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <span className="font-medium">Your Entry:</span>
+              <p className="mt-1 text-gray-700">{lastText}</p>
+            </div>
 
-            {/* USER MOOD */}
-            <p>
-              <span className="font-medium">Your Mood:</span>{" "}
-              {lastMood}
-            </p>
+            <div className="flex gap-3 flex-wrap">
 
-            {/* PREDICTED MOOD */}
-            <p>
-              <span className="font-medium">Predicted Mood:</span>{" "}
-              {result.predictedMood || "Not available"}
-            </p>
-
-            {/* MATCH / MISMATCH */}
-            <p>
-              <span className="font-medium">Mismatch:</span>{" "}
-              <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
-                {result.mismatch ? "Yes" : "No"}
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                Mood: {lastMood}
               </span>
-            </p>
 
-            <p>
-              <span className="font-medium">Perception Type:</span>{" "}
-              <span className="text-blue-500">
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                result.mismatch
+                  ? "bg-red-100 text-red-600"
+                  : "bg-green-100 text-green-600"
+              }`}>
+                {result.mismatch ? "Mismatch" : "Aligned"}
+              </span>
+
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
                 {result.perceptionType}
               </span>
-            </p>
+
+            </div>
 
           </div>
+
+          <p className="mt-4 text-xs text-gray-500">
+            This analysis reflects language patterns and self-reported mood,
+            not a medical diagnosis.
+          </p>
         </div>
       )}
     </div>
