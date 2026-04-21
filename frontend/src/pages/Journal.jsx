@@ -52,6 +52,25 @@ export default function Journal() {
     }
   };
 
+  /* 🔥 SMART MESSAGE LOGIC */
+  const getInsight = () => {
+    if (!result) return "";
+
+    if (result.mismatch && result.perceptionType === "Masking Stress") {
+      return "⚠ You may be feeling stressed internally but presenting yourself as fine. Try reflecting deeply.";
+    }
+
+    if (result.mismatch && result.perceptionType === "Resilience") {
+      return "💪 Even though you feel low, your thoughts show strength and positivity.";
+    }
+
+    if (!result.mismatch) {
+      return "✅ Your emotions and thoughts are aligned. Good emotional awareness!";
+    }
+
+    return "🧠 Reflect more on your thoughts and feelings.";
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
 
@@ -62,15 +81,15 @@ export default function Journal() {
       <div className="bg-white dark:bg-card shadow-xl rounded-2xl p-6 space-y-5 border">
 
         <textarea
-          className="w-full p-4 rounded-xl bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full p-4 rounded-xl bg-gray-50 border focus:ring-2 focus:ring-blue-500"
           rows="6"
-          placeholder="Write about your day, thoughts, or feelings..."
+          placeholder="Write about your day..."
           value={text}
           onChange={e => setText(e.target.value)}
         />
 
         <select
-          className="w-full p-3 rounded-xl bg-gray-50 dark:bg-surface border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-full p-3 rounded-xl bg-gray-50 border focus:ring-2 focus:ring-blue-500"
           value={mood}
           onChange={e => setMood(e.target.value)}
         >
@@ -85,7 +104,7 @@ export default function Journal() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold hover:opacity-90 transition shadow-md"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold"
         >
           {loading ? "Analyzing..." : "Save Entry"}
         </button>
@@ -98,7 +117,7 @@ export default function Journal() {
       </div>
 
       {result && (
-        <div className="mt-8 bg-white dark:bg-card shadow-xl rounded-2xl p-6 border">
+        <div className="mt-8 bg-white shadow-xl rounded-2xl p-6 border">
 
           <h2 className="text-xl font-semibold mb-4">
             📊 Analysis Result
@@ -108,7 +127,7 @@ export default function Journal() {
 
             <div className="p-3 bg-gray-50 rounded-lg">
               <span className="font-medium">📝 Your Entry:</span>
-              <p className="mt-1 text-gray-700">{lastText}</p>
+              <p className="mt-1">{lastText}</p>
             </div>
 
             <div className="flex gap-3 flex-wrap">
@@ -131,11 +150,15 @@ export default function Journal() {
 
             </div>
 
+            {/* 🔥 INSIGHT BOX */}
+            <div className="mt-4 p-4 rounded-xl bg-yellow-50 border text-yellow-800 text-sm">
+              {getInsight()}
+            </div>
+
           </div>
 
           <p className="mt-4 text-xs text-gray-500">
-            This analysis reflects language patterns and self-reported mood,
-            not a medical diagnosis.
+            This is not a medical diagnosis. It is an AI-based reflection tool.
           </p>
         </div>
       )}
