@@ -31,6 +31,7 @@ export default function Dashboard() {
     types: 0
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("https://mental-backend-heru.onrender.com/api/analytics")
@@ -39,7 +40,7 @@ export default function Dashboard() {
         const t = data.sentimentTrend || [];
         const rawMood = data.moodCount || {};
 
-        // ✅ FIX 1: Normalize mood (remove duplicates)
+        // normalize moods (Happy vs happy)
         const normalizedMood = {};
         Object.entries(rawMood).forEach(([key, value]) => {
           const cleanKey = key.toLowerCase();
@@ -50,16 +51,19 @@ export default function Dashboard() {
         setTrend(t);
         setMood(normalizedMood);
 
-        // ✅ FIX 2: Calculate stats safely
+        // avg sentiment
         const avg =
-          t.reduce((sum, i) => sum + i.score, 0) / (t.length || 1);
+          t.length > 0
+            ? t.reduce((sum, i) => sum + i.score, 0) / t.length
+            : 0;
 
+        // dominant mood
         const dominant =
           Object.keys(normalizedMood).length > 0
             ? Object.keys(normalizedMood).reduce((a, b) =>
                 normalizedMood[a] > normalizedMood[b] ? a : b
               )
-            : "None";
+            : "none";
 
         setStats({
           avg: avg.toFixed(2),
@@ -70,17 +74,28 @@ export default function Dashboard() {
 
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError("Failed to load dashboard");
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
     return <div className="text-center mt-10">⏳ Loading...</div>;
   }
 
+  if (error) {
+    return (
+      <div className="text-center mt-10 text-red-500">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-8">
 
-      {/* 🔥 HEADER */}
+      {/* HEADER */}
       <div>
         <h1 className="text-3xl font-bold">Mood Analytics</h1>
         <p className="text-gray-500">
@@ -88,86 +103,94 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* 🔥 TOP CARDS */}
+      {/* TOP CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-
         <Card title="Avg Sentiment" value={stats.avg} />
         <Card title="Dominant Mood" value={stats.dominant} />
         <Card title="Entries" value={stats.total} />
         <Card title="Mood Types" value={stats.types} />
-
       </div>
 
-      {/* 🔥 CHARTS */}
+      {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-        {/* 📈 Line Chart */}
+        {/* LINE CHART */}
         <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-xl font-semibold">Sentiment Trend</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            How your emotional tone changes over time
-          </p>
+          <h2 className="text-xl font-semibold">
+            Sentiment Trend
+          </h2>
 
-          <Line
-            data={{
-              labels: trend.map(t =>
-                new Date(t.date).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short"
-                })
-              ),
-              datasets: [
-                {
-                  label: "Sentiment",
-                  data: trend.map(t => t.score),
-                  borderColor: "#4f46e5",
-                  backgroundColor: "rgba(79,70,229,0.2)",
-                  tension: 0.4,
-                  fill: true
+          {trend.length === 0 ? (
+            <p className="text-gray-400 mt-4">
+              No data available
+            </p>
+          ) : (
+            <Line
+              data={{
+                labels: trend.map(t =>
+                  new Date(t.date).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short"
+                  })
+                ),
+                datasets: [
+                  {
+                    label: "Sentiment",
+                    data: trend.map(t => t.score),
+                    borderColor: "#4f46e5",
+                    backgroundColor: "rgba(79,70,229,0.2)",
+                    tension: 0.4,
+                    fill: true
+                  }
+                ]
+              }}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: "bottom" }
+                },
+                scales: {
+                  y: { min: -1, max: 1 }
                 }
-              ]
-            }}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { position: "bottom" }
-              },
-              scales: {
-                y: { min: -1, max: 1 }
-              }
-            }}
-          />
+              }}
+            />
+          )}
         </div>
 
-        {/* 🥧 Doughnut Chart */}
+        {/* DOUGHNUT CHART */}
         <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-xl font-semibold">Mood Distribution</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            How often each mood appears
-          </p>
+          <h2 className="text-xl font-semibold">
+            Mood Distribution
+          </h2>
 
-          <Doughnut
-            data={{
-              labels: Object.keys(mood).map(capitalize),
-              datasets: [
-                {
-                  data: Object.values(mood),
-                  backgroundColor: [
-                    "#22c55e", // happy
-                    "#6366f1", // neutral
-                    "#ef4444", // sad
-                    "#f59e0b", // anxious
-                    "#a855f7"  // stressed
-                  ]
+          {Object.keys(mood).length === 0 ? (
+            <p className="text-gray-400 mt-4">
+              No data available
+            </p>
+          ) : (
+            <Doughnut
+              data={{
+                labels: Object.keys(mood).map(capitalize),
+                datasets: [
+                  {
+                    data: Object.values(mood),
+                    backgroundColor: [
+                      "#22c55e",
+                      "#6366f1",
+                      "#ef4444",
+                      "#f59e0b",
+                      "#a855f7"
+                    ]
+                  }
+                ]
+              }}
+              options={{
+                plugins: {
+                  legend: { position: "bottom" }
                 }
-              ]
-            }}
-            options={{
-              plugins: {
-                legend: { position: "bottom" }
-              }
-            }}
-          />
+              }}
+            />
+          )}
         </div>
 
       </div>
@@ -176,17 +199,18 @@ export default function Dashboard() {
   );
 }
 
-/* 🔥 CARD COMPONENT */
+/* CARD */
 function Card({ title, value }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
+    <div className="bg-white p-6 rounded-2xl shadow">
       <p className="text-sm text-gray-500">{title}</p>
       <h2 className="text-2xl font-bold mt-2">{value}</h2>
     </div>
   );
 }
 
-/* 🔥 HELPER */
+/* HELPER */
 function capitalize(str) {
+  if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
