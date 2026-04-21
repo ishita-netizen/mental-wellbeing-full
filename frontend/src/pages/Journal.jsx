@@ -7,8 +7,9 @@ export default function Journal() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  // store last submitted data
   const [lastText, setLastText] = useState("");
-  const [lastMood, setLastMood] = useState(""); // ✅ NEW
+  const [lastMood, setLastMood] = useState("");
 
   const handleSubmit = async () => {
     if (!text || !mood) {
@@ -38,7 +39,7 @@ export default function Journal() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      // ✅ STORE LAST VALUES
+      // store everything
       setResult(data.data);
       setLastText(text);
       setLastMood(mood);
@@ -48,7 +49,7 @@ export default function Journal() {
       setMood("");
 
     } catch (err) {
-      setError("Server is waking up... please try again.");
+      setError("Server is waking up... try again.");
     } finally {
       setLoading(false);
     }
@@ -57,16 +58,17 @@ export default function Journal() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
 
+      {/* HEADER */}
       <h1 className="text-3xl font-bold mb-8 text-center">
-        Daily Journal
+        🧠 AI Journal
       </h1>
 
-      {/* INPUT */}
+      {/* INPUT CARD */}
       <div className="bg-white shadow-lg rounded-xl p-6 space-y-5">
 
         <textarea
           className="w-full p-4 rounded-lg border"
-          rows="6"
+          rows="5"
           placeholder="Write your thoughts..."
           value={text}
           onChange={e => setText(e.target.value)}
@@ -78,57 +80,75 @@ export default function Journal() {
           onChange={e => setMood(e.target.value)}
         >
           <option value="">Select your mood</option>
-          <option value="Happy">Happy</option>
-          <option value="Neutral">Neutral</option>
-          <option value="Sad">Sad</option>
-          <option value="Anxious">Anxious</option>
-          <option value="Stressed">Stressed</option>
+          <option>Happy</option>
+          <option>Neutral</option>
+          <option>Sad</option>
+          <option>Anxious</option>
+          <option>Stressed</option>
         </select>
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-blue-600 text-white"
+          className="w-full py-3 bg-blue-600 text-white rounded-lg"
         >
           {loading ? "Analyzing..." : "Save Entry"}
         </button>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center">{error}</p>
+        )}
       </div>
 
       {/* RESULT */}
       {result && (
-        <div className="mt-8 bg-white shadow rounded-xl p-6">
+        <div className="mt-8 bg-white shadow rounded-xl p-6 space-y-4">
 
-          <h2 className="text-xl font-semibold mb-4">
-            Analysis Result
+          <h2 className="text-xl font-semibold">
+            🔍 Analysis Result
           </h2>
 
-          {/* 📝 ENTRY */}
-          <div className="mb-4 p-4 bg-gray-100 rounded">
+          {/* USER ENTRY */}
+          <div className="p-3 bg-gray-100 rounded">
             <p className="text-sm text-gray-500">Your Entry:</p>
             <p>{lastText}</p>
           </div>
 
-          {/* 😊 MOOD */}
-          <div className="mb-4 p-3 bg-blue-100 rounded">
+          {/* USER MOOD */}
+          <div className="p-3 bg-blue-100 rounded">
             <p className="text-sm text-gray-500">Your Mood:</p>
             <p className="font-semibold">{lastMood}</p>
           </div>
 
-          {/* 🧠 RESULT */}
+          {/* NLP PREDICTED MOOD */}
+          <div className="p-3 bg-green-100 rounded">
+            <p className="text-sm text-gray-500">Predicted Mood (AI):</p>
+            <p className="font-semibold">
+              {result.predictedMood || "Not available"}
+            </p>
+          </div>
+
+          {/* MATCH / MISMATCH */}
+          <div>
+            {lastMood === result.predictedMood ? (
+              <p className="text-green-600">
+                ✅ Your mood matches your expression
+              </p>
+            ) : (
+              <p className="text-red-600">
+                ⚠ Your mood and expression differ
+              </p>
+            )}
+          </div>
+
+          {/* ANALYSIS */}
           <p>
             <b>Mismatch:</b>{" "}
-            <span className={result.mismatch ? "text-red-500" : "text-green-500"}>
-              {result.mismatch ? "Yes" : "No"}
-            </span>
+            {result.mismatch ? "Yes" : "No"}
           </p>
 
           <p>
-            <b>Perception:</b>{" "}
-            <span className="text-blue-500">
-              {result.perceptionType}
-            </span>
+            <b>Perception:</b> {result.perceptionType}
           </p>
 
           {/* INSIGHTS */}
