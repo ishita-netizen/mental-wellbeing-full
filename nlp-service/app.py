@@ -5,31 +5,31 @@ import os
 import re
 
 app = Flask(__name__)
-CORS(app)  # 🔥 allow frontend/backend access
+CORS(app)
 
 analyzer = SentimentIntensityAnalyzer()
 
-# 🔧 Clean text (keep emojis for better sentiment)
+# 🔧 Clean text
 def preprocess_text(text):
     text = text.lower()
-    text = re.sub(r"http\S+", "", text)   # remove URLs
-    text = re.sub(r"\s+", " ", text)      # normalize spaces
+    text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"\s+", " ", text)
     return text.strip()
 
 
-# ✅ HEALTH CHECK ROUTE (IMPORTANT FOR RENDER)
+# ✅ HEALTH CHECK
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "NLP Service Running 🚀"})
 
 
-# ✅ MAIN ANALYZE ROUTE
+# ✅ ANALYZE ROUTE
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
         data = request.get_json()
 
-        # ✅ validation
+        # validation
         if not data or "text" not in data:
             return jsonify({"error": "Text is required"}), 400
 
@@ -38,20 +38,28 @@ def analyze():
         if not isinstance(raw_text, str) or raw_text.strip() == "":
             return jsonify({"error": "Invalid or empty text"}), 400
 
-        # 🔥 preprocess
+        # preprocess
         text = preprocess_text(raw_text)
 
-        # 🔥 sentiment analysis
+        # sentiment
         scores = analyzer.polarity_scores(text)
         score = scores["compound"]
 
-        # 🔥 improved severity logic
-        if score >= 0.5:
-            severity = "Low"          # positive
-        elif score >= -0.5:
-            severity = "Moderate"     # neutral
+        # 🔥 PREDICTED MOOD (IMPORTANT FIX)
+        if score >= 0.4:
+            predicted_mood = "Happy"
+        elif score >= -0.2:
+            predicted_mood = "Neutral"
         else:
-            severity = "High"         # negative
+            predicted_mood = "Sad"
+
+        # severity
+        if score >= 0.5:
+            severity = "Low"
+        elif score >= -0.5:
+            severity = "Moderate"
+        else:
+            severity = "High"
 
         return jsonify({
             "success": True,
@@ -59,6 +67,7 @@ def analyze():
             "cleaned_text": text,
             "score": score,
             "severity": severity,
+            "predicted_mood": predicted_mood,  # ✅ FIXED
             "details": scores
         })
 
@@ -69,7 +78,7 @@ def analyze():
         }), 500
 
 
-# ✅ IMPORTANT FOR LOCAL + RENDER DEPLOYMENT
+# ✅ RUN (LOCAL + RENDER)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port)
