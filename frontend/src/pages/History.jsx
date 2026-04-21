@@ -19,56 +19,75 @@ export default function History() {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-10">Loading history...</p>;
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        ⏳ Loading history...
+      </p>
+    );
   }
 
   if (error) {
-    return <p className="text-center mt-10 text-red-500">{error}</p>;
+    return (
+      <p className="text-center mt-10 text-red-500">
+        {error}
+      </p>
+    );
   }
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Journal History</h1>
+
+      {/* 🔥 HEADER */}
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        📜 Journal History
+      </h1>
 
       {entries.length === 0 ? (
-        <p className="text-gray-500">No entries yet</p>
+        <p className="text-gray-500 text-center">
+          No entries yet
+        </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {entries.map((e) => {
             const predicted =
-              e.predictedMood || e.predicted_mood || "N/A"; // ✅ FIX
+              e.predictedMood || e.predicted_mood || "N/A";
 
             return (
               <div
                 key={e._id}
-                className="p-4 rounded-xl shadow bg-white dark:bg-card"
+                className="p-5 rounded-2xl shadow-lg bg-white dark:bg-card border hover:shadow-xl transition"
               >
-                <p className="text-sm text-gray-400">
+                {/* DATE */}
+                <p className="text-xs text-gray-400">
                   {new Date(e.createdAt).toLocaleString()}
                 </p>
 
-                <p className="mt-2">{e.text}</p>
+                {/* TEXT */}
+                <p className="mt-2 text-gray-800 dark:text-gray-200">
+                  {e.text}
+                </p>
 
-                <div className="mt-3 flex flex-wrap gap-2 text-sm">
+                {/* TAGS */}
+                <div className="mt-4 flex flex-wrap gap-2 text-sm">
 
-                  <span className="px-2 py-1 bg-blue-100 rounded">
-                    Mood: {e.mood}
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    😊 {e.mood}
                   </span>
 
-                  <span className="px-2 py-1 bg-green-100 rounded">
-                    AI: {predicted}
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
+                    🤖 {predicted}
                   </span>
 
-                  <span className="px-2 py-1 bg-gray-100 rounded">
-                    Score: {e.sentimentScore}
+                  <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
+                    📊 {e.sentimentScore?.toFixed(2)}
                   </span>
 
-                  <span className="px-2 py-1 bg-purple-100 rounded">
-                    {e.perceptionType}
+                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full">
+                    🧠 {e.perceptionType}
                   </span>
 
                   {e.mismatch && (
-                    <span className="px-2 py-1 bg-red-100 rounded text-red-600">
+                    <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full">
                       ⚠ Mismatch
                     </span>
                   )}
