@@ -47,53 +47,45 @@ export default function History() {
         </p>
       ) : (
         <div className="space-y-5">
-          {entries.map((e) => {
-            const predicted = e.predictedMood || e.predicted_mood;
+          {entries.map((e) => (
+            <div
+              key={e._id}
+              className="p-5 rounded-2xl shadow-lg bg-white dark:bg-card border hover:shadow-xl transition"
+            >
+              {/* DATE */}
+              <p className="text-xs text-gray-400">
+                {new Date(e.createdAt).toLocaleString()}
+              </p>
 
-            return (
-              <div
-                key={e._id}
-                className="p-5 rounded-2xl shadow-lg bg-white dark:bg-card border hover:shadow-xl transition"
-              >
-                <p className="text-xs text-gray-400">
-                  {new Date(e.createdAt).toLocaleString()}
-                </p>
+              {/* TEXT */}
+              <p className="mt-2 text-gray-800 dark:text-gray-200">
+                {e.text}
+              </p>
 
-                <p className="mt-2 text-gray-800 dark:text-gray-200">
-                  {e.text}
-                </p>
+              {/* TAGS */}
+              <div className="mt-4 flex flex-wrap gap-2 text-sm">
 
-                <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  😊 {e.mood}
+                </span>
 
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
-                    😊 {e.mood}
+                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
+                  📊 {e.sentimentScore?.toFixed(2)}
+                </span>
+
+                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full">
+                  🧠 {e.perceptionType}
+                </span>
+
+                {e.mismatch && (
+                  <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full">
+                    ⚠ Mismatch
                   </span>
+                )}
 
-                  {/* ✅ SHOW ONLY IF EXISTS */}
-                  {predicted && (
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                      🤖 {predicted}
-                    </span>
-                  )}
-
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
-                    📊 {e.sentimentScore?.toFixed(2)}
-                  </span>
-
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full">
-                    🧠 {e.perceptionType}
-                  </span>
-
-                  {e.mismatch && (
-                    <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full">
-                      ⚠ Mismatch
-                    </span>
-                  )}
-
-                </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </div>
