@@ -9,7 +9,7 @@ export default function History() {
     fetch("https://mental-backend-heru.onrender.com/api/entry")
       .then(res => res.json())
       .then(data => {
-        setEntries(data?.data || []); // ✅ safe access
+        setEntries(data?.data || []);
         setLoading(false);
       })
       .catch(() => {
@@ -43,17 +43,12 @@ export default function History() {
                 key={e._id}
                 className="p-4 rounded-xl shadow bg-white dark:bg-card"
               >
-                {/* DATE */}
                 <p className="text-sm text-gray-400">
-                  {e.createdAt
-                    ? new Date(e.createdAt).toLocaleString()
-                    : "No date"}
+                  {new Date(e.createdAt).toLocaleString()}
                 </p>
 
-                {/* TEXT */}
                 <p className="mt-2">{e.text}</p>
 
-                {/* TAGS */}
                 <div className="mt-3 flex flex-wrap gap-2 text-sm">
 
                   <span className="px-2 py-1 bg-blue-100 rounded">
@@ -65,11 +60,11 @@ export default function History() {
                   </span>
 
                   <span className="px-2 py-1 bg-gray-100 rounded">
-                    Score: {e.sentimentScore ?? 0}
+                    Score: {e.sentimentScore}
                   </span>
 
                   <span className="px-2 py-1 bg-purple-100 rounded">
-                    {e.perceptionType || "N/A"}
+                    {e.perceptionType}
                   </span>
 
                   {e.mismatch && (
