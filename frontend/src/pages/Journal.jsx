@@ -59,14 +59,14 @@ export default function Journal() {
     }
 
     if (result.mismatch && result.perceptionType === "Resilience") {
-      return "💪 Even though you feel low, your thoughts show strength and positivity.";
+      return "Even though you feel low, your thoughts show strength and positivity.";
     }
 
     if (!result.mismatch) {
-      return "✅ Your emotions and thoughts are aligned. Good emotional awareness!";
+      return "Your emotions and thoughts are aligned. Good emotional awareness!";
     }
 
-    return "🧠 Reflect more on your thoughts and feelings.";
+    return "Reflect more on your thoughts and feelings.";
   };
 
   return (
