@@ -9,7 +9,7 @@ CORS(app)
 
 analyzer = SentimentIntensityAnalyzer()
 
-# 🔧 Clean text
+
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"http\S+", "", text)
@@ -17,19 +17,19 @@ def preprocess_text(text):
     return text.strip()
 
 
-# ✅ HEALTH CHECK
+
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "NLP Service Running 🚀"})
 
 
-# ✅ ANALYZE ROUTE
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
         data = request.get_json()
 
-        # validation
+        
         if not data or "text" not in data:
             return jsonify({"error": "Text is required"}), 400
 
@@ -38,14 +38,14 @@ def analyze():
         if not isinstance(raw_text, str) or raw_text.strip() == "":
             return jsonify({"error": "Invalid or empty text"}), 400
 
-        # preprocess
+        
         text = preprocess_text(raw_text)
 
-        # sentiment
+        
         scores = analyzer.polarity_scores(text)
         score = scores["compound"]
 
-        # 🔥 PREDICTED MOOD (IMPORTANT FIX)
+        
         if score >= 0.4:
             predicted_mood = "Happy"
         elif score >= -0.2:
@@ -53,7 +53,7 @@ def analyze():
         else:
             predicted_mood = "Sad"
 
-        # severity
+        
         if score >= 0.5:
             severity = "Low"
         elif score >= -0.5:
@@ -67,7 +67,7 @@ def analyze():
             "cleaned_text": text,
             "score": score,
             "severity": severity,
-            "predicted_mood": predicted_mood,  # ✅ FIXED
+            "predicted_mood": predicted_mood,  
             "details": scores
         })
 
@@ -78,7 +78,7 @@ def analyze():
         }), 500
 
 
-# ✅ RUN (LOCAL + RENDER)
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port)
