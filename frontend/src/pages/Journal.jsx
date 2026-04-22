@@ -80,13 +80,7 @@ export default function Journal() {
     if (!result) return "";
 
     if (result.mismatch && result.perceptionType === "Masking Stress") {
-      return (
-         <>
-         ⚠You may be feeling stressed internally but presenting yourself as fine. Try reflecting deeply.
-         <br />
-        <Note: classname="font-medium">Note:</span> {getRandomQuote(maskingQuotes)};
-        </>
-      );
+      return "⚠ " + getRandomQuote(maskingQuotes);
     }
 
     if (result.mismatch && result.perceptionType === "Resilience") {
