@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Journal from "./pages/Journal";
 import Dashboard from "./pages/Dashboard";
-import History from "./pages/History"; // ✅ ADD THIS
+import History from "./pages/History";
 
 function App() {
   const [page, setPage] = useState("journal");
@@ -29,7 +29,7 @@ function App() {
 
         <button
           onClick={() => setDark(!dark)}
-          className="px-3 py-1 rounded bg-primary text-white"
+          className="px-3 py-1 rounded bg-indigo-500 text-white"
         >
           {dark ? "Light" : "Dark"}
         </button>
