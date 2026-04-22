@@ -50,20 +50,45 @@ export default function Journal() {
       setLoading(false);
     }
   };
+  const maskingQuotes = [
+    "You don’t have to pretend to be okay all the time.",
+    "Even silent struggles deserve to be heard.",
+    "It’s okay to take off the mask and just feel.",
+    "You’ve been strong for too long — rest is allowed.",
+    "Not everyone sees your pain, but that doesn’t make it any less real.",
+  ];
 
+  const resilienceQuotes = [
+    "Even in difficult moments, your strength is showing.",
+    "You’re doing better than you think you are.",
+    "Growth often hides inside tough days.",
+    "You are stronger than what you’re going through.",
+    "Every small step forward matters.",
+  ];
+
+  const alignedQuotes = [
+    "You’re in tune with your emotions — that’s powerful.",
+    "Self-awareness is a beautiful strength.",
+    "You understand yourself, and that’s rare.",
+    "Clarity in emotions brings peace.",
+    "You’re handling things with honesty and balance.",
+  ];
+  const getRandomQuote = (quotes) => {
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  };
   const getInsight = () => {
     if (!result) return "";
 
     if (result.mismatch && result.perceptionType === "Masking Stress") {
-      return "⚠ You may be feeling stressed internally but presenting yourself as fine. Try reflecting deeply.";
+      return "⚠ " + getRandomQuote(maskingQuotes);
     }
 
     if (result.mismatch && result.perceptionType === "Resilience") {
-      return "Even though you feel low, your thoughts show strength and positivity.";
+      return getRandomQuote(resilienceQuotes);
     }
 
     if (!result.mismatch) {
-      return "Your emotions and thoughts are aligned. Good emotional awareness!";
+      return getRandomQuote(alignedQuotes);
     }
 
     return "Reflect more on your thoughts and feelings.";
