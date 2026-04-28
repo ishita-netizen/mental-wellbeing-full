@@ -43,14 +43,17 @@ export default function Dashboard() {
         const normalizedMood = {};
         Object.entries(rawMood).forEach(([key, value]) => {
           const cleanKey = key.toLowerCase();
-          normalizedMood[cleanKey] = (normalizedMood[cleanKey] || 0) + value;
+          normalizedMood[cleanKey] =
+            (normalizedMood[cleanKey] || 0) + value;
         });
 
         setTrend(t);
         setMood(normalizedMood);
 
         const avg =
-          t.length > 0 ? t.reduce((sum, i) => sum + i.score, 0) / t.length : 0;
+          t.length > 0
+            ? t.reduce((sum, i) => sum + i.score, 0) / t.length
+            : 0;
 
         const dominant =
           Object.keys(normalizedMood).length > 0
@@ -74,12 +77,25 @@ export default function Dashboard() {
       });
   }, []);
 
+  const generateColors = (count) => {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+      const hue = Math.floor((360 / count) * i);
+      colors.push(`hsl(${hue}, 70%, 60%)`);
+    }
+    return colors;
+  };
+
   if (loading) {
-    return <div className="text-center mt-10">⏳ Loading...</div>;
+    return <div className="text-center mt-10">Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+    return (
+      <div className="text-center mt-10 text-red-500">
+        {error}
+      </div>
+    );
   }
 
   return (
@@ -99,12 +115,15 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* LINE CHART */}
         <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-xl font-semibold">Sentiment Trend</h2>
+          <h2 className="text-xl font-semibold">
+            Sentiment Trend
+          </h2>
 
           {trend.length === 0 ? (
-            <p className="text-gray-400 mt-4">No data available</p>
+            <p className="text-gray-400 mt-4">
+              No data available
+            </p>
           ) : (
             <Line
               data={{
@@ -139,10 +158,14 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-xl font-semibold">Mood Distribution</h2>
+          <h2 className="text-xl font-semibold">
+            Mood Distribution
+          </h2>
 
           {Object.keys(mood).length === 0 ? (
-            <p className="text-gray-400 mt-4">No data available</p>
+            <p className="text-gray-400 mt-4">
+              No data available
+            </p>
           ) : (
             <Doughnut
               data={{
@@ -150,13 +173,9 @@ export default function Dashboard() {
                 datasets: [
                   {
                     data: Object.values(mood),
-                    backgroundColor: [
-                      "#22c55e",
-                      "#6366f1",
-                      "#ef4444",
-                      "#f59e0b",
-                      "#a855f7",
-                    ],
+                    backgroundColor: generateColors(
+                      Object.keys(mood).length,
+                    ),
                   },
                 ],
               }}
