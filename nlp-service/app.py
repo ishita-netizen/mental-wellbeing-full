@@ -16,20 +16,15 @@ def preprocess_text(text):
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
-
-
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "NLP Service Running 🚀"})
-
-
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
         data = request.get_json()
 
-        
         if not data or "text" not in data:
             return jsonify({"error": "Text is required"}), 400
 
@@ -37,23 +32,16 @@ def analyze():
 
         if not isinstance(raw_text, str) or raw_text.strip() == "":
             return jsonify({"error": "Invalid or empty text"}), 400
-
-        
         text = preprocess_text(raw_text)
-
-        
         scores = analyzer.polarity_scores(text)
         score = scores["compound"]
 
-        
         if score >= 0.4:
             predicted_mood = "Happy"
         elif score >= -0.2:
             predicted_mood = "Neutral"
         else:
             predicted_mood = "Sad"
-
-        
         if score >= 0.5:
             severity = "Low"
         elif score >= -0.5:
