@@ -17,7 +17,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background text-gray-900 dark:text-gray-100">
-      {/* 🔝 NAVBAR */}
       <nav className="flex justify-between items-center px-6 py-4 bg-white dark:bg-card shadow">
         <div className="flex gap-6 font-semibold">
           <button onClick={() => setPage("journal")}>Journal</button>
