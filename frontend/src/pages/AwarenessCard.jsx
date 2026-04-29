@@ -36,9 +36,9 @@ export default function AwarenessCard() {
       </p>
 
       <p className="mt-4 text-sm">
-        {score > 75 && "🟢 Strong emotional awareness"}
-        {score > 50 && score <= 75 && "🟡 Moderate awareness"}
-        {score <= 50 && "🔴 Low awareness, reflect more"}
+        {score > 75 && "Strong emotional awareness"}
+        {score > 50 && score <= 75 && "Moderate awareness"}
+        {score <= 50 && "Low awareness, reflect more"}
       </p>
 
     </div>
